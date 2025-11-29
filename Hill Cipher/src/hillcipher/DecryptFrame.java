@@ -342,32 +342,32 @@ public class DecryptFrame extends javax.swing.JFrame {
         java.awt.Color inputColor = new java.awt.Color(60, 60, 60);
         java.awt.Color textColor = java.awt.Color.WHITE;
 
-        // 1. SET BACKGROUND UTAMA
+        // backgrounf
         getContentPane().setBackground(backgroundColor);
 
-        // 2. SET BACKGROUND UNTUK TAB CONTENT PANELS - GUNAKAN WARNA YANG LEBIH TERANG
+        // 2. bg untuk panel bagian content 
         jPanel2.setBackground(contentPaneColor);
         jPanel6.setBackground(contentPaneColor);
         jPanel1.setBackground(contentPaneColor);
         jPanel7.setBackground(contentPaneColor);
         jPanel3.setBackground(contentPaneColor);
 
-        // 3. SET BACKGROUND UNTUK SCROLL PANES - JUGA LEBIH TERANG
+        // 3. bg utk scroll panel
         jScrollPane4.getViewport().setBackground(contentPaneColor);
         jScrollPane2.getViewport().setBackground(contentPaneColor);
 
-        // 4. SET BACKGROUND UNTUK TABBED PANE
+        // 4. bg utk tabbed pane
         jTabbedPane1.setBackground(backgroundColor);
         jTabbedPane1.setForeground(textColor);
 
-        // 5. SET BACKGROUND UNTUK SETIAP TAB CONTENT - GUNAKAN WARNA LEBIH TERANG
+        // 5. bg utk setiap tab content (kanan)
         jTabbedPane1.setBackgroundAt(0, contentPaneColor);
         jTabbedPane1.setBackgroundAt(1, contentPaneColor);
 
-        // 6. CUSTOM TAB COMPONENTS
+        // 6. custom tab component
         setupCustomTabs();
 
-        // 7. SET LABEL COLORS
+        // 7. warna label (text)
         jLabel1.setForeground(textColor);
         jLabel8.setForeground(textColor);
         jLabel9.setForeground(textColor);
@@ -376,7 +376,7 @@ public class DecryptFrame extends javax.swing.JFrame {
         jLabel4.setForeground(textColor);
         jLabel10.setForeground(textColor);
 
-        // 8. SET INPUT FIELDS
+        // 8. input
         kalimat2x2Input.setBackground(inputColor);
         kalimat2x2Input.setForeground(textColor);
         kunci2x2Input.setBackground(inputColor);
@@ -386,7 +386,7 @@ public class DecryptFrame extends javax.swing.JFrame {
         kunci3x3Input.setBackground(inputColor);
         kunci3x3Input.setForeground(textColor);
 
-        // 9. SET BUTTONS
+        // 9. button
         decrypt2x2Button.setBackground(buttonColor);
         decrypt2x2Button.setForeground(textColor);
         back2x2Button.setBackground(buttonColor);
@@ -400,7 +400,7 @@ public class DecryptFrame extends javax.swing.JFrame {
         clear3x3Button.setBackground(buttonColor);
         clear3x3Button.setForeground(textColor);
 
-        // 10. REMOVE FOCUS BORDER
+        // 10. hapus focus border
         decrypt2x2Button.setFocusPainted(false);
         back2x2Button.setFocusPainted(false);
         clear2x2Button.setFocusPainted(false);
@@ -411,10 +411,11 @@ public class DecryptFrame extends javax.swing.JFrame {
 
     private void setupCustomTabs() {
         Color backgroundColor = new Color(28, 28, 28);
-        Color selectedColor = new Color(0, 80, 180); // Gunakan warna button untuk selected
+        Color selectedColor = new Color(0, 80, 180); 
         Color textColor = Color.WHITE;
 
-        for (int i = 0; i < jTabbedPane1.getTabCount(); i++) {
+        for (int i = 0; i < jTabbedPane1.getTabCount(); i++) 
+        {
             javax.swing.JLabel tabLabel = new javax.swing.JLabel(jTabbedPane1.getTitleAt(i));
             tabLabel.setOpaque(true);
             tabLabel.setForeground(textColor);
@@ -422,16 +423,19 @@ public class DecryptFrame extends javax.swing.JFrame {
             tabLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
             tabLabel.setPreferredSize(new java.awt.Dimension(110, 40));
 
-            if (i == jTabbedPane1.getSelectedIndex()) {
+            if (i == jTabbedPane1.getSelectedIndex()) 
+            {
                 tabLabel.setBackground(selectedColor);   // warna tab aktif
-            } else {
+            } 
+            else 
+            {
                 tabLabel.setBackground(backgroundColor); // warna tab non-aktif
             }
 
             jTabbedPane1.setTabComponentAt(i, tabLabel);
         }
 
-        // GUNAKAN CHANGE LISTENER YANG TIDAK MEMANGGIL DIRI SENDIRI
+        // change listener yg tidak memanggil dirinya
         jTabbedPane1.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 updateTabSelection();
@@ -446,13 +450,18 @@ public class DecryptFrame extends javax.swing.JFrame {
 
         int selectedIndex = jTabbedPane1.getSelectedIndex();
 
-        for (int i = 0; i < jTabbedPane1.getTabCount(); i++) {
+        for (int i = 0; i < jTabbedPane1.getTabCount(); i++) 
+        {
             java.awt.Component tabComp = jTabbedPane1.getTabComponentAt(i);
-            if (tabComp instanceof javax.swing.JLabel) {
+            if (tabComp instanceof javax.swing.JLabel) 
+            {
                 javax.swing.JLabel tabLabel = (javax.swing.JLabel) tabComp;
-                if (i == selectedIndex) {
+                if (i == selectedIndex) 
+                {
                     tabLabel.setBackground(selectedColor);
-                } else {
+                } 
+                else 
+                {
                     tabLabel.setBackground(backgroundColor);
                 }
                 tabLabel.setForeground(textColor);
@@ -463,7 +472,8 @@ public class DecryptFrame extends javax.swing.JFrame {
     private boolean validateCiphertextLength(String ciphertext, int matrixSize) {
         int ciphertextLength = ciphertext.length();
 
-        if (ciphertextLength % matrixSize != 0) {
+        if (ciphertextLength % matrixSize != 0) 
+        {
             int neededChars = matrixSize - (ciphertextLength % matrixSize);
             int excessChars = ciphertextLength % matrixSize;
 
@@ -495,22 +505,23 @@ public class DecryptFrame extends javax.swing.JFrame {
             String ciphertext = kalimat2x2Input.getText().trim();
             String keyText = kunci2x2Input.getText().trim();
 
-            if (ciphertext.isEmpty() || keyText.isEmpty()) {
+            if (ciphertext.isEmpty() || keyText.isEmpty()) 
+            {
                 javax.swing.JOptionPane.showMessageDialog(this, 
                     "Masukkan ciphertext dan kunci matriks!", "Error", 
                     javax.swing.JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            // Validasi panjang ciphertext
+            // validasi panjang ciphertext
             if (!validateCiphertextLength(ciphertext, 2)) {
                 return;
             }
 
-            // Parse matriks kunci 2x2 dengan validasi ketat
+            // parse matriks kunci 2x2 dengan validasi 
             int[][] keyMatrix = HillCipherUtility.parseKeyMatrix(keyText, 2);
 
-            // Validasi kunci
+            // validasi kunci
             if (!HillCipherUtility.isValidKey(keyMatrix, 26)) {
                 javax.swing.JOptionPane.showMessageDialog(this, 
                     "Kunci tidak valid! Determinan harus relatif prima dengan 26.", "Error", 
@@ -518,10 +529,10 @@ public class DecryptFrame extends javax.swing.JFrame {
                 return;
             }
 
-            // Dekripsi dengan detail - TAMBAHKAN parameter paddingCount (0 untuk sekarang)
+            // deskripsi proses
             HillCipherUtility.DecryptionResult result = HillCipherUtility.decryptWithDetails(ciphertext, keyMatrix, 0);
 
-            // Tampilkan hasil
+            // tampilkan hasil
             new HasilDecryptFrame(ciphertext, result.getPlaintext(), keyMatrix, 2, result.getSteps()).setVisible(true);
             this.dispose();
 
@@ -564,15 +575,15 @@ public class DecryptFrame extends javax.swing.JFrame {
                 return;
             }
 
-            // Validasi panjang ciphertext
+            // validasi panjang ciphertext
             if (!validateCiphertextLength(ciphertext, 3)) {
                 return;
             }
 
-            // Parse matriks kunci 3x3
+            // parse matriks kunci 3x3
             int[][] keyMatrix = HillCipherUtility.parseKeyMatrix(keyText, 3);
 
-            // Validasi kunci
+            // validasi kunci
             if (!HillCipherUtility.isValidKey(keyMatrix, 26)) {
                 javax.swing.JOptionPane.showMessageDialog(this, 
                     "Kunci tidak valid! Determinan harus relatif prima dengan 26.", "Error", 
@@ -580,10 +591,10 @@ public class DecryptFrame extends javax.swing.JFrame {
                 return;
             }
 
-            // Dekripsi dengan detail - TAMBAHKAN parameter paddingCount (0 untuk sekarang)
+            // deskripsi proses
             HillCipherUtility.DecryptionResult result = HillCipherUtility.decryptWithDetails3x3(ciphertext, keyMatrix, 0);
 
-            // Tampilkan hasil
+            // tampilkan hasil
             new HasilDecryptFrame(ciphertext, result.getPlaintext(), keyMatrix, 3, result.getSteps()).setVisible(true);
             this.dispose();
 

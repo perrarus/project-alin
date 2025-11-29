@@ -10,14 +10,14 @@ import java.util.List;
 
 public class HillCipherUtility {
     
-    // konversi huruf ke angka (
+    // konversi huruf ke angka (a = 0, b = 1, ..., z = 25)
     public static int letterToNumber(char letter) {
-        return Character.toLowerCase(letter) - 'a' + 1;  // +1 karena a = 1
+        return Character.toLowerCase(letter) - 'a';  // a = 0
     }
     
-    // konversi angka ke huruf 
+    // konversi angka ke huruf (0 = A, 1 = B, ..., 25 = Z)
     public static String numberToLetter(int number) {
-        int adjustedNumber = (number - 1) % 26;
+        int adjustedNumber = number % 26;
         if (adjustedNumber < 0) adjustedNumber += 26;
         return String.valueOf((char) (adjustedNumber + 'A'));
     }
@@ -25,11 +25,11 @@ public class HillCipherUtility {
     // konversi karakter ke angka 
     public static int charToNumber(char ch) {
         if (Character.isLetter(ch)) {
-            // huruf: A=1, ..., Z=26
-            return Character.toUpperCase(ch) - 'A' + 1;
+            // huruf: A=0, ..., Z=25
+            return Character.toUpperCase(ch) - 'A';
         } else if (Character.isDigit(ch)) {
-            // angka: 0=27, ..., 9=36
-            return ch - '0' + 27;
+            // angka: 0=26, ..., 9=35
+            return ch - '0' + 26;
         } else {
             // karakter lain diabaikan
             return -1;
@@ -38,16 +38,16 @@ public class HillCipherUtility {
     
     // konversi angka ke karakter
     public static String numberToChar(int number) {
-        if (number >= 1 && number <= 26) {
-            return String.valueOf((char) (number - 1 + 'A'));
-        } else if (number >= 27 && number <= 36) {
-            return String.valueOf((char) (number - 27 + '0'));
+        if (number >= 0 && number <= 25) {
+            return String.valueOf((char) (number + 'A'));
+        } else if (number >= 26 && number <= 35) {
+            return String.valueOf((char) (number - 26 + '0'));
         } else {
             return "?"; //karakter lain
         }
     }
     
-    // Konversi teks ke angka (A=1, B=2, ..., Z=26, 0=27, 1=28, ..., 9=36)
+    // konversi teks ke angka
     public static int[] textToNumbers(String text) {
         text = text.toUpperCase().replaceAll("[^A-Z0-9]", "");
         List<Integer> numbersList = new ArrayList<>();
@@ -60,7 +60,7 @@ public class HillCipherUtility {
             }
         }
         
-        // Konversi List ke array
+        // konversi list ke array
         int[] numbers = new int[numbersList.size()];
         for (int i = 0; i < numbersList.size(); i++) {
             numbers[i] = numbersList.get(i);
@@ -68,7 +68,7 @@ public class HillCipherUtility {
         return numbers;
     }
     
-    // Konversi angka ke teks (1=A, 2=B, ..., 26=Z, 27=0, 28=1, ..., 36=9)
+    // Kkonversi angka ke teks 
     public static String numbersToText(int[] numbers) {
         StringBuilder text = new StringBuilder();
         for (int number : numbers) {
@@ -77,11 +77,11 @@ public class HillCipherUtility {
         return text.toString();
     }
     
-    // Parse matriks kunci dari string input (bisa angka atau huruf) dengan validasi ketat
+    // parse matriks kunci dari input dengan validasi 
     public static int[][] parseKeyMatrix(String keyText, int size) {
         String[] rows = keyText.split("\n");
         
-        // Validasi jumlah baris
+        // validasi jumlah baris
         if (rows.length < size) {
             throw new IllegalArgumentException("Kunci matriks " + size + "x" + size + " membutuhkan " + size + " baris");
         }
@@ -92,30 +92,39 @@ public class HillCipherUtility {
             if (i < rows.length) {
                 String[] values = rows[i].trim().split("\\s+");
                 
-                // Validasi jumlah kolom per baris
+                // validasi jumlah kolom per baris
                 if (values.length < size) {
                     throw new IllegalArgumentException("Baris " + (i+1) + " hanya memiliki " + values.length + " elemen, butuh " + size + " elemen");
                 }
                 
                 for (int j = 0; j < size; j++) {
-                    if (j < values.length && !values[j].isEmpty()) {
+                    if (j < values.length && !values[j].isEmpty()) 
+                    {
                         try {
-                            // Coba parse sebagai angka dulu
+                            // oba parse sebagai angka 
                             matrix[i][j] = Integer.parseInt(values[j]);
                         } catch (NumberFormatException e) {
-                            // Jika bukan angka, coba sebagai huruf
-                            if (values[j].length() == 1) {
+                            // coba sebagai huruf
+                            if (values[j].length() == 1) 
+                            {
                                 char ch = values[j].charAt(0);
-                                if (Character.isLetter(ch)) {
+                                if (Character.isLetter(ch)) 
+                                {
                                     matrix[i][j] = letterToNumber(ch);
-                                } else {
+                                } 
+                                else 
+                                {
                                     throw new IllegalArgumentException("Karakter '" + values[j] + "' tidak valid. Harus angka atau huruf");
                                 }
-                            } else {
+                            } 
+                            else 
+                            {
                                 throw new IllegalArgumentException("Nilai '" + values[j] + "' tidak valid");
                             }
                         }
-                    } else {
+                    } 
+                    else 
+                    {
                         throw new IllegalArgumentException("Elemen matriks tidak boleh kosong");
                     }
                 }
@@ -124,25 +133,25 @@ public class HillCipherUtility {
         return matrix;
     }
     
-    // Validasi matriks kunci
+    // validasi matriks kunci
     public static boolean isValidKey(int[][] keyMatrix, int mod) {
         int det = determinant(keyMatrix);
         return gcd(det, mod) == 1;
     }
     
-    // Hitung determinan matriks 2x2
+    // hitung determinan matriks 2x2
     public static int determinant2x2(int[][] matrix) {
         return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
     }
     
-    // Hitung determinan matriks 3x3
+    // hitung determinan matriks 3x3
     public static int determinant3x3(int[][] matrix) {
         return matrix[0][0] * (matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1])
              - matrix[0][1] * (matrix[1][0] * matrix[2][2] - matrix[1][2] * matrix[2][0])
              + matrix[0][2] * (matrix[1][0] * matrix[2][1] - matrix[1][1] * matrix[2][0]);
     }
     
-    // Hitung determinan berdasarkan ukuran
+    // hitung determinan berdasarkan ukuran
     public static int determinant(int[][] matrix) {
         if (matrix.length == 2) {
             return determinant2x2(matrix);
@@ -151,13 +160,13 @@ public class HillCipherUtility {
         }
     }
     
-    // Cari GCD (Greatest Common Divisor)
+    // cari GCD 
     public static int gcd(int a, int b) {
         if (b == 0) return Math.abs(a);
         return gcd(b, a % b);
     }
     
-    // Class untuk menyimpan hasil enkripsi dengan informasi padding
+    // class utk simpan hasil enkripsi 
     public static class EncryptionResultWithPadding {
         private final String ciphertext;
         private final List<String> steps;
@@ -177,20 +186,20 @@ public class HillCipherUtility {
         public String getOriginalPlaintext() { return originalPlaintext; }
     }
     
-    // Enkripsi Hill Cipher dengan penyimpanan informasi padding
+    // enkripsi Hill Cipher 
     public static String encrypt(String plaintext, int[][] keyMatrix) {
         int size = keyMatrix.length;
         int[] numbers = textToNumbers(plaintext);
         
-        // Tambah padding jika perlu
+        // Ttambah padding kalau perlu
         int paddingNeeded = (size - (numbers.length % size)) % size;
         int[] paddedNumbers = new int[numbers.length + paddingNeeded];
         System.arraycopy(numbers, 0, paddedNumbers, 0, numbers.length);
         for (int i = numbers.length; i < paddedNumbers.length; i++) {
-            paddedNumbers[i] = 24; // Padding dengan 'X' (X=24 karena A=1)
+            paddedNumbers[i] = 23; // Padding dengan 'X' (X=23 karena A=0)
         }
         
-        // Enkripsi per blok
+        // enkripsi per blok
         List<Integer> resultNumbers = new ArrayList<>();
         for (int i = 0; i < paddedNumbers.length; i += size) {
             int[] block = new int[size];
@@ -202,7 +211,7 @@ public class HillCipherUtility {
             }
         }
         
-        // Konversi ke array primitif
+        // konversi ke array primitif
         int[] resultArray = new int[resultNumbers.size()];
         for (int i = 0; i < resultNumbers.size(); i++) {
             resultArray[i] = resultNumbers.get(i);
@@ -210,43 +219,47 @@ public class HillCipherUtility {
         
         return numbersToText(resultArray);
     }
-    
-    // Enkripsi dengan proses detail untuk ditampilkan dan menyimpan informasi padding
+  
     public static EncryptionResultWithPadding encryptWithDetails(String plaintext, int[][] keyMatrix) {
         int size = keyMatrix.length;
         String originalPlaintext = plaintext; // Simpan plaintext asli
         
-        // Simpan semua langkah untuk ditampilkan
+        // simpan semua langkah untuk ditampilkan
         List<String> steps = new ArrayList<>();
         steps.add("PROSES ENKRIPSI HILL CIPHER");
         steps.add("============================");
         steps.add("Plaintext: " + plaintext);
         steps.add("");
         
-        // Tampilkan matriks kunci
+        // tampilkan matriks kunci
         steps.add("Kunci Matriks " + size + "x" + size + ":");
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < size; i++) 
+        {
             StringBuilder row = new StringBuilder();
-            for (int j = 0; j < size; j++) {
+            for (int j = 0; j < size; j++) 
+            {
                 row.append(String.format("%2d", keyMatrix[i][j])).append(" ");
             }
             steps.add(row.toString());
         }
         
-        // Tampilkan determinan
+        // tampilkan determinan
         int det = determinant(keyMatrix);
         steps.add("Determinan: " + det);
         steps.add("GCD(" + det + ", 26) = " + gcd(det, 26));
         steps.add("");
         
-        // Konversi plaintext ke angka
+        // konversi plaintext ke angka
         int[] numbers = textToNumbers(plaintext);
         StringBuilder numberStep = new StringBuilder("Plaintext -> Angka: ");
         for (int i = 0; i < numbers.length; i++) {
-            if (i < plaintext.length()) {
+            if (i < plaintext.length()) 
+            {
                 char ch = plaintext.charAt(i);
                 numberStep.append(ch).append(" = ").append(numbers[i]);
-            } else {
+            } 
+            else 
+            {
                 numberStep.append("X = ").append(numbers[i]);
             }
             if (i < numbers.length - 1) numberStep.append(", ");
@@ -254,37 +267,42 @@ public class HillCipherUtility {
         steps.add(numberStep.toString());
         steps.add("");
         
-        // Tambah padding jika perlu
         int paddingNeeded = (size - (numbers.length % size)) % size;
         int[] paddedNumbers = new int[numbers.length + paddingNeeded];
         System.arraycopy(numbers, 0, paddedNumbers, 0, numbers.length);
         
-        if (paddingNeeded > 0) {
+        if (paddingNeeded > 0) 
+        {
             steps.add("Penambahan padding (" + paddingNeeded + " karakter 'X'):");
-            for (int i = numbers.length; i < paddedNumbers.length; i++) {
-                paddedNumbers[i] = 24; // 'X' = 24 (karena A=1, B=2, ..., X=24)
+            for (int i = numbers.length; i < paddedNumbers.length; i++) 
+            {
+                paddedNumbers[i] = 23; // 'X' = 23 (karena A=0, B=1, ..., X=23)
             }
             StringBuilder paddedStep = new StringBuilder("Setelah padding: ");
-            for (int i = 0; i < paddedNumbers.length; i++) {
+            for (int i = 0; i < paddedNumbers.length; i++) 
+            {
                 paddedStep.append(paddedNumbers[i]);
                 if (i < paddedNumbers.length - 1) paddedStep.append(", ");
             }
             steps.add(paddedStep.toString());
-        } else {
+        } 
+        else 
+        {
             steps.add("Tidak perlu padding");
         }
         steps.add("");
         
-        // TAMPILKAN MATRIKS PLAINTEXT
         steps.add("MATRIKS PLAINTEXT:");
         steps.add("=================");
 
-        // Tampilkan sebagai matriks 2 kolom
-        for (int i = 0; i < paddedNumbers.length; i += 2) {
+        // tampilkan sebagai matriks 2 kolom
+        for (int i = 0; i < paddedNumbers.length; i += 2) 
+        {
             StringBuilder row = new StringBuilder();
             row.append("[");
             row.append(String.format("%2d", paddedNumbers[i])).append("  ");
-            if (i + 1 < paddedNumbers.length) {
+            if (i + 1 < paddedNumbers.length) 
+            {
                 row.append(String.format("%2d", paddedNumbers[i + 1]));
             }
             row.append("]");
@@ -292,7 +310,7 @@ public class HillCipherUtility {
         }
         steps.add("");
 
-        // Tampilkan penjelasan per blok
+        // tampilkan penjelasan per blok
         steps.add("PEMBAGIAN BLOK:");
         steps.add("==============");
         int blockCount = paddedNumbers.length / size;
@@ -309,7 +327,7 @@ public class HillCipherUtility {
         }
         steps.add("");
         
-        // Enkripsi per blok
+        // enkripsi per blok
         List<Integer> resultNumbers = new ArrayList<>();
         steps.add("PROSES ENKRIPSI PER BLOK:");
         steps.add("========================");
@@ -318,7 +336,7 @@ public class HillCipherUtility {
             int[] block = new int[size];
             System.arraycopy(paddedNumbers, i, block, 0, size);
             
-            // Tampilkan blok dengan karakter
+            // tampilkan hasil per blok
             StringBuilder blockWithChars = new StringBuilder();
             blockWithChars.append("Blok ").append(i/size + 1).append(": [");
             for (int j = 0; j < size; j++) {
@@ -332,11 +350,11 @@ public class HillCipherUtility {
             }
             steps.add(blockWithChars.toString());
             
-            // Tampilkan perkalian matriks
+            // tampilkan perkalian matriks
             steps.add("Perkalian dengan matriks kunci:");
             int[] encryptedBlock = multiplyMatrixWithDetails(keyMatrix, block, steps);
             
-            // Tampilkan hasil blok dengan karakter
+            // tampilkan hasil blok dengan karakter
             StringBuilder resultWithChars = new StringBuilder();
             resultWithChars.append("Hasil blok ").append(i/size + 1).append(": [");
             for (int j = 0; j < encryptedBlock.length; j++) {
@@ -356,7 +374,7 @@ public class HillCipherUtility {
             }
         }
         
-        // Konversi ke array primitif
+        // konversi ke array primitif
         int[] resultArray = new int[resultNumbers.size()];
         for (int i = 0; i < resultNumbers.size(); i++) {
             resultArray[i] = resultNumbers.get(i);
@@ -367,8 +385,7 @@ public class HillCipherUtility {
         
         return new EncryptionResultWithPadding(ciphertext, steps, paddingNeeded, originalPlaintext);
     }
-    
-    // Enkripsi 3x3 dengan proses detail seperti 2x2 dan menyimpan informasi padding
+   
     public static EncryptionResultWithPadding encryptWithDetails3x3(String plaintext, int[][] keyMatrix) {
         int size = keyMatrix.length;
         if (size != 3) {
@@ -377,14 +394,14 @@ public class HillCipherUtility {
         
         String originalPlaintext = plaintext; // Simpan plaintext asli
         
-        // Simpan semua langkah untuk ditampilkan
+        // simpan semua langkah untuk ditampilkan
         List<String> steps = new ArrayList<>();
         steps.add("PROSES ENKRIPSI HILL CIPHER 3x3");
         steps.add("================================");
         steps.add("Plaintext: " + plaintext);
         steps.add("");
         
-        // Tampilkan matriks kunci
+        // tampilkan matriks kunci
         steps.add("Kunci Matriks 3x3:");
         for (int i = 0; i < size; i++) {
             StringBuilder row = new StringBuilder();
@@ -394,20 +411,24 @@ public class HillCipherUtility {
             steps.add(row.toString());
         }
         
-        // Tampilkan determinan
+        // tampilkan determinan
         int det = determinant3x3(keyMatrix);
         steps.add("Determinan: " + det);
         steps.add("GCD(" + det + ", 26) = " + gcd(det, 26));
         steps.add("");
         
-        // Konversi plaintext ke angka
+        // konversi plaintext ke angka
         int[] numbers = textToNumbers(plaintext);
         StringBuilder numberStep = new StringBuilder("Plaintext -> Angka: ");
-        for (int i = 0; i < numbers.length; i++) {
-            if (i < plaintext.length()) {
+        for (int i = 0; i < numbers.length; i++) 
+        {
+            if (i < plaintext.length()) 
+            {
                 char ch = plaintext.charAt(i);
                 numberStep.append(ch).append(" = ").append(numbers[i]);
-            } else {
+            } 
+            else 
+            {
                 numberStep.append("X = ").append(numbers[i]);
             }
             if (i < numbers.length - 1) numberStep.append(", ");
@@ -415,41 +436,49 @@ public class HillCipherUtility {
         steps.add(numberStep.toString());
         steps.add("");
         
-        // Tambah padding jika perlu
+        // tambah padding jika perlu
         int paddingNeeded = (3 - (numbers.length % 3)) % 3;
         int[] paddedNumbers = new int[numbers.length + paddingNeeded];
         System.arraycopy(numbers, 0, paddedNumbers, 0, numbers.length);
         
-        if (paddingNeeded > 0) {
+        if (paddingNeeded > 0) 
+        {
             steps.add("Penambahan padding (" + paddingNeeded + " karakter 'X'):");
-            for (int i = numbers.length; i < paddedNumbers.length; i++) {
-                paddedNumbers[i] = 24; // 'X' = 24
+            for (int i = numbers.length; i < paddedNumbers.length; i++) 
+            {
+                paddedNumbers[i] = 23; // 'X' = 23
             }
             StringBuilder paddedStep = new StringBuilder("Setelah padding: ");
-            for (int i = 0; i < paddedNumbers.length; i++) {
+            for (int i = 0; i < paddedNumbers.length; i++) 
+            {
                 paddedStep.append(paddedNumbers[i]);
                 if (i < paddedNumbers.length - 1) paddedStep.append(", ");
             }
             steps.add(paddedStep.toString());
-        } else {
+        } 
+        else 
+        {
             steps.add("Tidak perlu padding");
         }
         steps.add("");
         
-        // TAMPILKAN MATRIKS PLAINTEXT 3 KOLOM
         steps.add("MATRIKS PLAINTEXT (3 kolom):");
         steps.add("============================");
 
-        // Tampilkan sebagai matriks 3 kolom
+        // tampilkan sebagai matriks 3 kolom
         for (int i = 0; i < paddedNumbers.length; i += 3) {
             StringBuilder row = new StringBuilder();
             row.append("[");
-            for (int j = 0; j < 3; j++) {
+            for (int j = 0; j < 3; j++) 
+            {
                 int index = i + j;
-                if (index < paddedNumbers.length) {
+                if (index < paddedNumbers.length) 
+                {
                     row.append(String.format("%2d", paddedNumbers[index]));
-                } else {
-                    row.append("  "); // Spasi untuk padding
+                } 
+                else 
+                {
+                    row.append("  "); 
                 }
                 if (j < 2) row.append("  ");
             }
@@ -458,14 +487,15 @@ public class HillCipherUtility {
         }
         steps.add("");
 
-        // Tampilkan penjelasan per blok
         steps.add("PEMBAGIAN BLOK (3 karakter per blok):");
         steps.add("====================================");
         int blockCount = paddedNumbers.length / 3;
-        for (int i = 0; i < blockCount; i++) {
+        for (int i = 0; i < blockCount; i++) 
+        {
             StringBuilder blockInfo = new StringBuilder();
             blockInfo.append("Blok ").append(i + 1).append(": [");
-            for (int j = 0; j < 3; j++) {
+            for (int j = 0; j < 3; j++) 
+            {
                 int index = i * 3 + j;
                 blockInfo.append(paddedNumbers[index]);
                 if (j < 2) blockInfo.append(", ");
@@ -475,7 +505,7 @@ public class HillCipherUtility {
         }
         steps.add("");
         
-        // Enkripsi per blok
+        // enkripsi per blok
         List<Integer> resultNumbers = new ArrayList<>();
         steps.add("PROSES ENKRIPSI PER BLOK:");
         steps.add("========================");
@@ -484,7 +514,7 @@ public class HillCipherUtility {
             int[] block = new int[3];
             System.arraycopy(paddedNumbers, i, block, 0, 3);
             
-            // Tampilkan blok dengan karakter
+            // tampilkan blok dengan karakter (huruf)
             StringBuilder blockWithChars = new StringBuilder();
             blockWithChars.append("Blok ").append(i/3 + 1).append(": [");
             for (int j = 0; j < 3; j++) {
@@ -498,11 +528,11 @@ public class HillCipherUtility {
             }
             steps.add(blockWithChars.toString());
             
-            // Tampilkan perkalian matriks
+            // tampilkan perkalian matriks
             steps.add("Perkalian dengan matriks kunci:");
             int[] encryptedBlock = multiplyMatrix3x3WithDetails(keyMatrix, block, steps);
             
-            // Tampilkan hasil blok dengan karakter
+            // tampilkan hasil blok dengan karakter (huruf)
             StringBuilder resultWithChars = new StringBuilder();
             resultWithChars.append("Hasil blok ").append(i/3 + 1).append(": [");
             for (int j = 0; j < encryptedBlock.length; j++) {
@@ -522,7 +552,7 @@ public class HillCipherUtility {
             }
         }
         
-        // Konversi ke array primitif
+        // konversi ke array primitif
         int[] resultArray = new int[resultNumbers.size()];
         for (int i = 0; i < resultNumbers.size(); i++) {
             resultArray[i] = resultNumbers.get(i);
@@ -533,12 +563,11 @@ public class HillCipherUtility {
         
         return new EncryptionResultWithPadding(ciphertext, steps, paddingNeeded, originalPlaintext);
     }
-    
-    // Dekripsi dengan proses detail untuk ditampilkan dan menghapus padding
+   
     public static DecryptionResult decryptWithDetails(String ciphertext, int[][] keyMatrix, int paddingCount) {
         int size = keyMatrix.length;
         
-        // Simpan semua langkah untuk ditampilkan
+        // simpan semua langkah untuk ditampilkan
         List<String> steps = new ArrayList<>();
         steps.add("PROSES DEKRIPSI HILL CIPHER");
         steps.add("============================");
@@ -548,7 +577,7 @@ public class HillCipherUtility {
         }
         steps.add("");
         
-        // Tampilkan matriks kunci
+        // tampilkan matriks kunci
         steps.add("Kunci Matriks " + size + "x" + size + ":");
         for (int i = 0; i < size; i++) {
             StringBuilder row = new StringBuilder();
@@ -558,20 +587,20 @@ public class HillCipherUtility {
             steps.add(row.toString());
         }
         
-        // Tampilkan determinan
+        // tampilkan determinan
         int det = determinant(keyMatrix);
         steps.add("Determinan: " + det);
         steps.add("GCD(" + det + ", 26) = " + gcd(det, 26));
         steps.add("");
         
-        // Cari matriks invers
+        // cari matriks invers
         steps.add("MENCARI MATRIKS INVERS:");
         steps.add("======================");
         int[][] inverseMatrix = findInverseMatrixWithDetails(keyMatrix, 26, steps);
         
         steps.add("");
         
-        // Konversi ciphertext ke angka
+        // konversi ciphertext ke angka
         int[] numbers = textToNumbers(ciphertext);
         StringBuilder numberStep = new StringBuilder("Ciphertext -> Angka: ");
         for (int i = 0; i < numbers.length; i++) {
@@ -584,31 +613,37 @@ public class HillCipherUtility {
         steps.add(numberStep.toString());
         steps.add("");
         
-        // TAMPILKAN MATRIKS CIPHERTEXT
         steps.add("MATRIKS CIPHERTEXT:");
         steps.add("===================");
 
-        // Tampilkan sebagai matriks
+        // tampil sebagai matriks
         if (size == 2) {
-            // Tampilkan 2 kolom untuk matriks 2x2
-            for (int i = 0; i < numbers.length; i += 2) {
+            // tampilkan 2 kolom untuk matriks 2x2
+            for (int i = 0; i < numbers.length; i += 2) 
+            {
                 StringBuilder row = new StringBuilder();
                 row.append("[");
                 row.append(String.format("%2d", numbers[i])).append("  ");
-                if (i + 1 < numbers.length) {
+                if (i + 1 < numbers.length) 
+                {
                     row.append(String.format("%2d", numbers[i + 1]));
                 }
                 row.append("]");
                 steps.add(row.toString());
             }
-        } else {
-            // Tampilkan 3 kolom untuk matriks 3x3
-            for (int i = 0; i < numbers.length; i += 3) {
+        } 
+        else 
+        {
+            // tampilkan 3 kolom untuk matriks 3x3
+            for (int i = 0; i < numbers.length; i += 3) 
+            {
                 StringBuilder row = new StringBuilder();
                 row.append("[");
-                for (int j = 0; j < 3; j++) {
+                for (int j = 0; j < 3; j++) 
+                {
                     int index = i + j;
-                    if (index < numbers.length) {
+                    if (index < numbers.length) 
+                    {
                         row.append(String.format("%2d", numbers[index]));
                     }
                     if (j < 2) row.append("  ");
@@ -619,14 +654,16 @@ public class HillCipherUtility {
         }
         steps.add("");
 
-        // Tampilkan penjelasan per blok
+        // tampilkan penjelasan per blok
         steps.add("PEMBAGIAN BLOK:");
         steps.add("==============");
         int blockCount = numbers.length / size;
         for (int i = 0; i < blockCount; i++) {
+            
             StringBuilder blockInfo = new StringBuilder();
             blockInfo.append("Blok ").append(i + 1).append(": [");
-            for (int j = 0; j < size; j++) {
+            for (int j = 0; j < size; j++) 
+            {
                 int index = i * size + j;
                 blockInfo.append(numbers[index]);
                 if (j < size - 1) blockInfo.append(", ");
@@ -636,7 +673,7 @@ public class HillCipherUtility {
         }
         steps.add("");
         
-        // Dekripsi per blok
+        // dekripsi per blok
         List<Integer> resultNumbers = new ArrayList<>();
         steps.add("PROSES DEKRIPSI PER BLOK:");
         steps.add("========================");
@@ -645,7 +682,7 @@ public class HillCipherUtility {
             int[] block = new int[size];
             System.arraycopy(numbers, i, block, 0, size);
             
-            // Tampilkan blok dengan karakter
+            // tampilkan blok dengan karakter (huruf/angka)
             StringBuilder blockWithChars = new StringBuilder();
             blockWithChars.append("Blok ").append(i/size + 1).append(": [");
             for (int j = 0; j < size; j++) {
@@ -659,11 +696,11 @@ public class HillCipherUtility {
             }
             steps.add(blockWithChars.toString());
             
-            // Tampilkan perkalian matriks
+            // tampilkan perkalian matriks
             steps.add("Perkalian dengan matriks invers:");
             int[] decryptedBlock = multiplyMatrixWithDetails(inverseMatrix, block, steps);
             
-            // Tampilkan hasil blok dengan karakter
+            // tampilkan hasil blok dengan karakter
             StringBuilder resultWithChars = new StringBuilder();
             resultWithChars.append("Hasil blok ").append(i/size + 1).append(": [");
             for (int j = 0; j < decryptedBlock.length; j++) {
@@ -683,7 +720,7 @@ public class HillCipherUtility {
             }
         }
         
-        // Konversi ke array primitif
+        // konversi ke array primitif
         int[] resultArray = new int[resultNumbers.size()];
         for (int i = 0; i < resultNumbers.size(); i++) {
             resultArray[i] = resultNumbers.get(i);
@@ -691,7 +728,6 @@ public class HillCipherUtility {
         
         String decryptedWithPadding = numbersToText(resultArray);
         
-        // HAPUS PADDING
         String plaintext;
         if (paddingCount > 0 && decryptedWithPadding.length() >= paddingCount) {
             plaintext = decryptedWithPadding.substring(0, decryptedWithPadding.length() - paddingCount);
@@ -707,14 +743,14 @@ public class HillCipherUtility {
         return new DecryptionResult(plaintext, steps);
     }
     
-    // Dekripsi 3x3 dengan proses detail dan menghapus padding
+    // dekripsi 3x3 
     public static DecryptionResult decryptWithDetails3x3(String ciphertext, int[][] keyMatrix, int paddingCount) {
         int size = keyMatrix.length;
         if (size != 3) {
             throw new IllegalArgumentException("Method ini hanya untuk matriks 3x3");
         }
         
-        // Simpan semua langkah untuk ditampilkan
+        // simpan semua langkah untuk ditampilkan
         List<String> steps = new ArrayList<>();
         steps.add("PROSES DEKRIPSI HILL CIPHER 3x3");
         steps.add("================================");
@@ -724,7 +760,7 @@ public class HillCipherUtility {
         }
         steps.add("");
         
-        // Tampilkan matriks kunci
+        // tampilkan matriks kunci
         steps.add("Kunci Matriks 3x3:");
         for (int i = 0; i < size; i++) {
             StringBuilder row = new StringBuilder();
@@ -734,20 +770,20 @@ public class HillCipherUtility {
             steps.add(row.toString());
         }
         
-        // Tampilkan determinan
+        // tampilkan determinan
         int det = determinant3x3(keyMatrix);
         steps.add("Determinan: " + det);
         steps.add("GCD(" + det + ", 26) = " + gcd(det, 26));
         steps.add("");
         
-        // Cari matriks invers
+        // cari matriks invers
         steps.add("MENCARI MATRIKS INVERS:");
         steps.add("======================");
         int[][] inverseMatrix = findInverseMatrix3x3WithDetails(keyMatrix, 26, steps);
         
         steps.add("");
         
-        // Konversi ciphertext ke angka
+        // konversi ciphertext ke angka
         int[] numbers = textToNumbers(ciphertext);
         StringBuilder numberStep = new StringBuilder("Ciphertext -> Angka: ");
         for (int i = 0; i < numbers.length; i++) {
@@ -760,11 +796,10 @@ public class HillCipherUtility {
         steps.add(numberStep.toString());
         steps.add("");
         
-        // TAMPILKAN MATRIKS CIPHERTEXT 3 KOLOM
         steps.add("MATRIKS CIPHERTEXT (3 kolom):");
         steps.add("=============================");
 
-        // Tampilkan sebagai matriks 3 kolom
+        // tampilkan sebagai matriks 3 kolom
         for (int i = 0; i < numbers.length; i += 3) {
             StringBuilder row = new StringBuilder();
             row.append("[");
@@ -780,14 +815,16 @@ public class HillCipherUtility {
         }
         steps.add("");
 
-        // Tampilkan penjelasan per blok
+        // tampilkan penjelasan per blok
         steps.add("PEMBAGIAN BLOK (3 karakter per blok):");
         steps.add("====================================");
         int blockCount = numbers.length / 3;
-        for (int i = 0; i < blockCount; i++) {
+        for (int i = 0; i < blockCount; i++) 
+        {
             StringBuilder blockInfo = new StringBuilder();
             blockInfo.append("Blok ").append(i + 1).append(": [");
-            for (int j = 0; j < 3; j++) {
+            for (int j = 0; j < 3; j++) 
+            {
                 int index = i * 3 + j;
                 blockInfo.append(numbers[index]);
                 if (j < 2) blockInfo.append(", ");
@@ -797,7 +834,7 @@ public class HillCipherUtility {
         }
         steps.add("");
         
-        // Dekripsi per blok
+        // dekripsi per blok
         List<Integer> resultNumbers = new ArrayList<>();
         steps.add("PROSES DEKRIPSI PER BLOK:");
         steps.add("========================");
@@ -806,7 +843,7 @@ public class HillCipherUtility {
             int[] block = new int[3];
             System.arraycopy(numbers, i, block, 0, 3);
             
-            // Tampilkan blok dengan karakter
+            // tampilkan blok dengan karakter
             StringBuilder blockWithChars = new StringBuilder();
             blockWithChars.append("Blok ").append(i/3 + 1).append(": [");
             for (int j = 0; j < 3; j++) {
@@ -820,11 +857,11 @@ public class HillCipherUtility {
             }
             steps.add(blockWithChars.toString());
             
-            // Tampilkan perkalian matriks
+            // tampilkan perkalian matriks
             steps.add("Perkalian dengan matriks invers:");
             int[] decryptedBlock = multiplyMatrix3x3WithDetails(inverseMatrix, block, steps);
             
-            // Tampilkan hasil blok dengan karakter
+            // tampilkan hasil blok dengan karakter
             StringBuilder resultWithChars = new StringBuilder();
             resultWithChars.append("Hasil blok ").append(i/3 + 1).append(": [");
             for (int j = 0; j < decryptedBlock.length; j++) {
@@ -844,15 +881,14 @@ public class HillCipherUtility {
             }
         }
         
-        // Konversi ke array primitif
+        // konversi ke array primitif
         int[] resultArray = new int[resultNumbers.size()];
         for (int i = 0; i < resultNumbers.size(); i++) {
             resultArray[i] = resultNumbers.get(i);
         }
         
         String decryptedWithPadding = numbersToText(resultArray);
-        
-        // HAPUS PADDING
+       
         String plaintext;
         if (paddingCount > 0 && decryptedWithPadding.length() >= paddingCount) {
             plaintext = decryptedWithPadding.substring(0, decryptedWithPadding.length() - paddingCount);
@@ -868,15 +904,15 @@ public class HillCipherUtility {
         return new DecryptionResult(plaintext, steps);
     }
     
-    // Dekripsi biasa (untuk kompatibilitas)
+    // dekripsi biasa 
     public static String decrypt(String ciphertext, int[][] keyMatrix) {
         int size = keyMatrix.length;
         int[] numbers = textToNumbers(ciphertext);
         
-        // Cari matriks invers
+        // cari matriks invers
         int[][] inverseMatrix = findInverseMatrix(keyMatrix, 26);
         
-        // Dekripsi per blok
+        // dekripsi per blok
         List<Integer> resultNumbers = new ArrayList<>();
         for (int i = 0; i < numbers.length; i += size) {
             int[] block = new int[size];
@@ -888,7 +924,7 @@ public class HillCipherUtility {
             }
         }
         
-        // Konversi ke array primitif
+        // konversi ke array primitif
         int[] resultArray = new int[resultNumbers.size()];
         for (int i = 0; i < resultNumbers.size(); i++) {
             resultArray[i] = resultNumbers.get(i);
@@ -897,14 +933,14 @@ public class HillCipherUtility {
         return numbersToText(resultArray);
     }
     
-    // Method bantu untuk mencari invers matriks dengan detail
+    // method bantu untuk cari invers matriks dengan detail
     private static int[][] findInverseMatrixWithDetails(int[][] matrix, int mod, List<String> steps) {
         int size = matrix.length;
         int det = determinant(matrix);
         
         steps.add("Determinan matriks: " + det);
         
-        // Cari invers determinan modulo 26
+        // cari invers determinan modulo 26
         int detInverse = -1;
         for (int i = 0; i < mod; i++) {
             if ((det * i) % mod == 1) {
@@ -927,7 +963,7 @@ public class HillCipherUtility {
         }
     }
     
-    // Invers matriks 2x2 dengan detail
+    // invers matriks 2x2 
     private static int[][] inverse2x2WithDetails(int[][] matrix, int detInverse, int mod, List<String> steps) {
         steps.add("");
         steps.add("Rumus invers matriks 2x2:");
@@ -954,13 +990,13 @@ public class HillCipherUtility {
         return inverse;
     }
     
-    // Invers matriks 3x3 dengan detail
+    // invers matriks 3x3 
     private static int[][] findInverseMatrix3x3WithDetails(int[][] matrix, int mod, List<String> steps) {
         int det = determinant3x3(matrix);
         
         steps.add("Determinan matriks: " + det);
         
-        // Cari invers determinan modulo 26
+        // cari invers determinan modulo 26
         int detInverse = -1;
         for (int i = 0; i < mod; i++) {
             if ((det * i) % mod == 1) {
@@ -979,7 +1015,7 @@ public class HillCipherUtility {
         return inverse3x3WithDetails(matrix, detInverse, mod, steps);
     }
     
-    // Invers matriks 3x3 dengan detail
+    // invers matriks 3x3 
     private static int[][] inverse3x3WithDetails(int[][] matrix, int detInverse, int mod, List<String> steps) {
         steps.add("");
         steps.add("Menghitung matriks kofaktor:");
@@ -1025,7 +1061,7 @@ public class HillCipherUtility {
         return inverse;
     }
     
-    // Method bantu untuk perkalian matriks 3x3 dengan detail
+    // method untuk perkalian matriks 3x3 
     private static int[] multiplyMatrix3x3WithDetails(int[][] matrix, int[] vector, List<String> steps) {
         int[] result = new int[3];
         
@@ -1042,7 +1078,7 @@ public class HillCipherUtility {
             
             calculation.append(") = ").append(sum);
             
-            // Tampilkan perhitungan detail
+            // tampilkan perhitungan 
             StringBuilder detailCalc = new StringBuilder();
             detailCalc.append("    = ");
             for (int j = 0; j < 3; j++) {
@@ -1052,11 +1088,8 @@ public class HillCipherUtility {
             detailCalc.append(" = ").append(sum);
             steps.add(detailCalc.toString());
             
-            // Mod 26
+            // mod 26
             int modResult = Math.floorMod(sum, 26);
-            if (modResult == 0) {
-                modResult = 26;
-            }
             
             calculation.append(" mod 26 = ").append(modResult);
             steps.add(calculation.toString());
@@ -1068,7 +1101,7 @@ public class HillCipherUtility {
         return result;
     }
     
-    // Method bantu untuk perkalian matriks dengan detail
+    // method untuk perkalian matriks 
     private static int[] multiplyMatrixWithDetails(int[][] matrix, int[] vector, List<String> steps) {
         int size = matrix.length;
         int[] result = new int[size];
@@ -1088,16 +1121,12 @@ public class HillCipherUtility {
             steps.add(calculation.toString());
             
             result[i] = Math.floorMod(sum, 26);
-            // Untuk A=1, kita perlu menyesuaikan range 0-25 menjadi 1-26
-            if (result[i] == 0) {
-                result[i] = 26;
-            }
         }
         
         return result;
     }
     
-    // Perkalian matriks dengan vektor
+    // perkalian matriks dengan vektor
     private static int[] multiplyMatrix(int[][] matrix, int[] vector) {
         int size = matrix.length;
         int[] result = new int[size];
@@ -1108,21 +1137,17 @@ public class HillCipherUtility {
                 sum += matrix[i][j] * vector[j];
             }
             result[i] = Math.floorMod(sum, 26); // Mod 26
-            // Untuk A=1, kita perlu menyesuaikan range 0-25 menjadi 1-26
-            if (result[i] == 0) {
-                result[i] = 26;
-            }
         }
         
         return result;
     }
     
-    // Cari matriks invers modulo 26
+    // cari matriks invers modulo 26
     public static int[][] findInverseMatrix(int[][] matrix, int mod) {
         int size = matrix.length;
         int det = determinant(matrix);
         
-        // Cari invers determinan modulo 26
+        // cari invers determinan modulo 26
         int detInverse = -1;
         for (int i = 0; i < mod; i++) {
             if ((det * i) % mod == 1) {
@@ -1142,7 +1167,7 @@ public class HillCipherUtility {
         }
     }
     
-    // Invers matriks 2x2
+    // invers matriks 2x2
     private static int[][] inverse2x2(int[][] matrix, int detInverse, int mod) {
         int[][] inverse = new int[2][2];
         inverse[0][0] = Math.floorMod(matrix[1][1] * detInverse, mod);
@@ -1152,11 +1177,11 @@ public class HillCipherUtility {
         return inverse;
     }
     
-    // Invers matriks 3x3
+    // invers matriks 3x3
     private static int[][] inverse3x3(int[][] matrix, int detInverse, int mod) {
         int[][] inverse = new int[3][3];
         
-        // Hitung kofaktor
+        // hitung kofaktor
         int[][] cofactor = new int[3][3];
         cofactor[0][0] = Math.floorMod(matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1], mod);
         cofactor[0][1] = Math.floorMod(-(matrix[1][0] * matrix[2][2] - matrix[1][2] * matrix[2][0]), mod);
@@ -1168,7 +1193,7 @@ public class HillCipherUtility {
         cofactor[2][1] = Math.floorMod(-(matrix[0][0] * matrix[1][2] - matrix[0][2] * matrix[1][0]), mod);
         cofactor[2][2] = Math.floorMod(matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0], mod);
         
-        // Transpose dan kalikan dengan invers determinan
+        // transpose dan kalikan dengan invers determinan
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 inverse[i][j] = Math.floorMod(cofactor[j][i] * detInverse, mod);
@@ -1178,7 +1203,7 @@ public class HillCipherUtility {
         return inverse;
     }
     
-    // Class untuk menyimpan hasil enkripsi dengan detail proses
+    // class untuk simpan hasil enkripsi
     public static class EncryptionResult {
         private final String ciphertext;
         private final List<String> steps;
@@ -1192,7 +1217,7 @@ public class HillCipherUtility {
         public List<String> getSteps() { return steps; }
     }
     
-    // Class untuk menyimpan hasil dekripsi dengan detail proses
+    // class untuk menyimpan hasil dekripsi dengan detail proses
     public static class DecryptionResult {
         private final String plaintext;
         private final List<String> steps;

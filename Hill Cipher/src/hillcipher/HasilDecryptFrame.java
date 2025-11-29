@@ -37,7 +37,7 @@ public class HasilDecryptFrame extends javax.swing.JFrame {
 
         initComponents();
         customizeComponents();
-        displayDetailedResults(steps); // Panggil method untuk steps detail
+        displayDetailedResults(steps); 
         setLocationRelativeTo(null);
     }
 
@@ -157,43 +157,40 @@ public class HasilDecryptFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
     
     public void customizeComponents() {
-        // Define colors - SAMA PERSIS DENGAN HasilEncryptFrame
         java.awt.Color backgroundColor = new java.awt.Color(28, 28, 28);
         java.awt.Color buttonColor = new java.awt.Color(0, 80, 180);
         java.awt.Color inputColor = new java.awt.Color(60, 60, 60);
         java.awt.Color textColor = java.awt.Color.WHITE;
         java.awt.Color borderColor = new java.awt.Color(20, 50, 100); // WARNA BORDER
 
-        // Set background color for main components
         getContentPane().setBackground(backgroundColor);
 
-        // Panel backgrounds
+        // bg panel
         jPanel1.setBackground(backgroundColor);
         jPanel2.setBackground(backgroundColor);
 
-        // Labels - set text color to white
+        // label (font)
         jLabel1.setForeground(textColor);
 
-        // Input fields - background and text color
+        // input 
         hasilOutput.setBackground(inputColor);
         hasilOutput.setForeground(textColor);
         prosesDecryptionOutput.setBackground(inputColor);
         prosesDecryptionOutput.setForeground(textColor);
 
-        // Button - background and text color
+        // button 
         backButton.setBackground(buttonColor);
         backButton.setForeground(textColor);
 
-        // Remove focus border from button
+        // hapus focus border  dari button
         backButton.setFocusPainted(false);
 
-        // Customize titled borders dengan border lebih TEBAL - SAMA PERSIS
+        // Customize titled borders 
         try {
-            // Untuk jPanel1 - Proses Decryption (BORDER 3 PIXEL)
             jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(
                 javax.swing.BorderFactory.createCompoundBorder(
-                    javax.swing.BorderFactory.createLineBorder(borderColor, 3), // Border luar tebal
-                    javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5)    // Padding dalam
+                    javax.swing.BorderFactory.createLineBorder(borderColor, 3), // border luar tebal
+                    javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5)    // padding dalam
                 ), 
                 "Proses Decryption",
                 javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION,
@@ -202,11 +199,10 @@ public class HasilDecryptFrame extends javax.swing.JFrame {
                 textColor
             ));
 
-            // Untuk jPanel2 - Hasil Decryption (BORDER 3 PIXEL)  
             jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(
                 javax.swing.BorderFactory.createCompoundBorder(
-                    javax.swing.BorderFactory.createLineBorder(borderColor, 3), // Border luar tebal
-                    javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5)    // Padding dalam
+                    javax.swing.BorderFactory.createLineBorder(borderColor, 3), // border luar tebal
+                    javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5)    // padding dalam
                 ),
                 "Hasil Decryption",
                 javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION,
@@ -216,10 +212,9 @@ public class HasilDecryptFrame extends javax.swing.JFrame {
             ));
 
         } catch (Exception e) {
-            // Fallback jika ada error
+            // fallback jika ada error
             System.out.println("Error setting border: " + e.getMessage());
 
-            // Gunakan cara sederhana dengan border tebal
             jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(
                 javax.swing.BorderFactory.createLineBorder(borderColor, 3), 
                 "Proses Decryption"
@@ -229,7 +224,7 @@ public class HasilDecryptFrame extends javax.swing.JFrame {
                 "Hasil Decryption"
             ));
 
-            // Set title color dan font
+            // warna title dan font
             javax.swing.border.TitledBorder border1 = (javax.swing.border.TitledBorder) jPanel1.getBorder();
             border1.setTitleColor(textColor);
             border1.setTitleFont(new java.awt.Font("Bahnschrift", 1, 14));
@@ -241,18 +236,20 @@ public class HasilDecryptFrame extends javax.swing.JFrame {
     }
     
     public void displayResults() {
-        // Tampilkan plaintext di hasil output
+        // tampilkan plaintext di hasil output
         hasilOutput.setText(plaintext);
         
-        // Tampilkan detail proses di text area
+        // tampilkan detail proses di text area
         StringBuilder processDetails = new StringBuilder();
         processDetails.append("Ciphertext: ").append(ciphertext.toUpperCase()).append("\n");
         processDetails.append("Plaintext: ").append(plaintext).append("\n\n");
         processDetails.append("Kunci Matriks ").append(matrixSize).append("x").append(matrixSize).append(":\n");
         
-        // Tampilkan matriks kunci
-        for (int i = 0; i < matrixSize; i++) {
-            for (int j = 0; j < matrixSize; j++) {
+        // tampilkan matriks kunci
+        for (int i = 0; i < matrixSize; i++) 
+        {
+            for (int j = 0; j < matrixSize; j++) 
+            {
                 processDetails.append(keyMatrix[i][j]).append(" ");
             }
             processDetails.append("\n");
@@ -262,10 +259,10 @@ public class HasilDecryptFrame extends javax.swing.JFrame {
     }
     
     public void displayDetailedResults(List<String> steps) {
-        // Tampilkan plaintext di hasil output
+        // tampilkan plaintext di hasil output
         hasilOutput.setText(plaintext);
 
-        // Tampilkan langkah-langkah detail di text area
+        // tampilkan langkah-langkah detail di text area
         StringBuilder processDetails = new StringBuilder();
         for (String step : steps) {
             processDetails.append(step).append("\n");

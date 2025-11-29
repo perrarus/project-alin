@@ -340,32 +340,32 @@ public class EncryptFrame extends javax.swing.JFrame {
         java.awt.Color inputColor = new java.awt.Color(60, 60, 60);
         java.awt.Color textColor = java.awt.Color.WHITE;
 
-        // 1. SET BACKGROUND UTAMA
+        // bg utama
         getContentPane().setBackground(backgroundColor);
 
-        // 2. SET BACKGROUND UNTUK TAB CONTENT PANELS - GUNAKAN WARNA YANG LEBIH TERANG
+        // bg tab content panel
         jPanel2.setBackground(contentPaneColor);
         jPanel6.setBackground(contentPaneColor);
         jPanel1.setBackground(contentPaneColor);
         jPanel7.setBackground(contentPaneColor);
         jPanel3.setBackground(contentPaneColor);
 
-        // 3. SET BACKGROUND UNTUK SCROLL PANES - JUGA LEBIH TERANG
+        // scroll pane
         jScrollPane4.getViewport().setBackground(contentPaneColor);
         jScrollPane2.getViewport().setBackground(contentPaneColor);
 
-        // 4. SET BACKGROUND UNTUK TABBED PANE
+        // tabbed pane
         jTabbedPane1.setBackground(backgroundColor);
         jTabbedPane1.setForeground(textColor);
 
-        // 5. SET BACKGROUND UNTUK SETIAP TAB CONTENT - GUNAKAN WARNA LEBIH TERANG
+        // bg utk setiap tab content
         jTabbedPane1.setBackgroundAt(0, contentPaneColor);
         jTabbedPane1.setBackgroundAt(1, contentPaneColor);
 
-        // 6. CUSTOM TAB COMPONENTS
+        // custom tab components
         setupCustomTabs();
 
-        // 7. SET LABEL COLORS
+        // warna label (text)
         jLabel1.setForeground(textColor);
         jLabel8.setForeground(textColor);
         jLabel9.setForeground(textColor);
@@ -374,7 +374,7 @@ public class EncryptFrame extends javax.swing.JFrame {
         jLabel4.setForeground(textColor);
         jLabel10.setForeground(textColor);
 
-        // 8. SET INPUT FIELDS
+        // input
         kalimat2x2Input.setBackground(inputColor);
         kalimat2x2Input.setForeground(textColor);
         kunci2x2Input.setBackground(inputColor);
@@ -384,7 +384,7 @@ public class EncryptFrame extends javax.swing.JFrame {
         kunci3x3Input.setBackground(inputColor);
         kunci3x3Input.setForeground(textColor);
 
-        // 9. SET BUTTONS
+        // button
         encrypt2x2Button.setBackground(buttonColor);
         encrypt2x2Button.setForeground(textColor);
         back2x2Button.setBackground(buttonColor);
@@ -398,7 +398,7 @@ public class EncryptFrame extends javax.swing.JFrame {
         clear3x3Button.setBackground(buttonColor);
         clear3x3Button.setForeground(textColor);
 
-        // 10. REMOVE FOCUS BORDER
+        // hapus focus border
         encrypt2x2Button.setFocusPainted(false);
         back2x2Button.setFocusPainted(false);
         clear2x2Button.setFocusPainted(false);
@@ -409,10 +409,11 @@ public class EncryptFrame extends javax.swing.JFrame {
 
     private void setupCustomTabs() {
         Color backgroundColor = new Color(28, 28, 28);
-        Color selectedColor = new Color(0, 80, 180); // Gunakan warna button untuk selected
+        Color selectedColor = new Color(0, 80, 180); 
         Color textColor = Color.WHITE;
 
-        for (int i = 0; i < jTabbedPane1.getTabCount(); i++) {
+        for (int i = 0; i < jTabbedPane1.getTabCount(); i++) 
+        {
             javax.swing.JLabel tabLabel = new javax.swing.JLabel(jTabbedPane1.getTitleAt(i));
             tabLabel.setOpaque(true);
             tabLabel.setForeground(textColor);
@@ -420,16 +421,19 @@ public class EncryptFrame extends javax.swing.JFrame {
             tabLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
             tabLabel.setPreferredSize(new java.awt.Dimension(110, 40));
 
-            if (i == jTabbedPane1.getSelectedIndex()) {
+            if (i == jTabbedPane1.getSelectedIndex()) 
+            {
                 tabLabel.setBackground(selectedColor);   // warna tab aktif
-            } else {
+            } 
+            else 
+            {
                 tabLabel.setBackground(backgroundColor); // warna tab non-aktif
             }
 
             jTabbedPane1.setTabComponentAt(i, tabLabel);
         }
 
-        // GUNAKAN CHANGE LISTENER YANG TIDAK MEMANGGIL DIRI SENDIRI
+        // change listener yg tidak memanggil dirinya
         jTabbedPane1.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 updateTabSelection();
@@ -444,13 +448,18 @@ public class EncryptFrame extends javax.swing.JFrame {
 
         int selectedIndex = jTabbedPane1.getSelectedIndex();
 
-        for (int i = 0; i < jTabbedPane1.getTabCount(); i++) {
+        for (int i = 0; i < jTabbedPane1.getTabCount(); i++) 
+        {
             java.awt.Component tabComp = jTabbedPane1.getTabComponentAt(i);
-            if (tabComp instanceof javax.swing.JLabel) {
+            if (tabComp instanceof javax.swing.JLabel) 
+            {
                 javax.swing.JLabel tabLabel = (javax.swing.JLabel) tabComp;
-                if (i == selectedIndex) {
+                if (i == selectedIndex) 
+                {
                     tabLabel.setBackground(selectedColor);
-                } else {
+                } 
+                else 
+                {
                     tabLabel.setBackground(backgroundColor);
                 }
                 tabLabel.setForeground(textColor);
@@ -468,28 +477,29 @@ public class EncryptFrame extends javax.swing.JFrame {
             String plaintext = kalimat2x2Input.getText().trim();
             String keyText = kunci2x2Input.getText().trim();
 
-            if (plaintext.isEmpty() || keyText.isEmpty()) {
+            if (plaintext.isEmpty() || keyText.isEmpty()) 
+            {
                 javax.swing.JOptionPane.showMessageDialog(this, 
                     "Masukkan kalimat dan kunci matriks!", "Error", 
                     javax.swing.JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            // Parse matriks kunci 2x2
+            // parse matriks kunci 2x2
             int[][] keyMatrix = HillCipherUtility.parseKeyMatrix(keyText, 2);
 
-            // Validasi kunci
-            if (!HillCipherUtility.isValidKey(keyMatrix, 26)) {
+            // validasi kunci
+            if (!HillCipherUtility.isValidKey(keyMatrix, 26)) 
+            {
                 javax.swing.JOptionPane.showMessageDialog(this, 
                     "Kunci tidak valid! Determinan harus relatif prima dengan 26.", "Error", 
                     javax.swing.JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            // ⚠️ UBAH BARIS INI - GUNAKAN encryptWithDetails (DENGAN PADDING)
             HillCipherUtility.EncryptionResultWithPadding result = HillCipherUtility.encryptWithDetails(plaintext, keyMatrix);
 
-            // Tampilkan hasil
+            // tampilkan hasil
             new HasilEncryptFrame(plaintext, result.getCiphertext(), keyMatrix, 2, result.getSteps(), result.getPaddingCount()).setVisible(true);
             this.dispose();
 
@@ -505,17 +515,18 @@ public class EncryptFrame extends javax.swing.JFrame {
             String plaintext = kalimat3x3Input.getText().trim();
             String keyText = kunci3x3Input.getText().trim();
 
-            if (plaintext.isEmpty() || keyText.isEmpty()) {
+            if (plaintext.isEmpty() || keyText.isEmpty()) 
+            {
                 javax.swing.JOptionPane.showMessageDialog(this, 
                     "Masukkan plaintext dan kunci matriks!", "Error", 
                     javax.swing.JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            // Parse matriks kunci 3x3
+            // parse matriks kunci 3x3
             int[][] keyMatrix = HillCipherUtility.parseKeyMatrix(keyText, 3);
 
-            // Validasi kunci
+            // validasi kunci
             if (!HillCipherUtility.isValidKey(keyMatrix, 26)) {
                 javax.swing.JOptionPane.showMessageDialog(this, 
                     "Kunci tidak valid! Determinan harus relatif prima dengan 26.", "Error", 
@@ -523,10 +534,9 @@ public class EncryptFrame extends javax.swing.JFrame {
                 return;
             }
 
-            // ⚠️ UBAH BARIS INI - GUNAKAN encryptWithDetails3x3 (DENGAN PADDING)
             HillCipherUtility.EncryptionResultWithPadding result = HillCipherUtility.encryptWithDetails3x3(plaintext, keyMatrix);
 
-            // Tampilkan hasil
+            // tampilkan hasil
             new HasilEncryptFrame(plaintext, result.getCiphertext(), keyMatrix, 3, result.getSteps(), result.getPaddingCount()).setVisible(true);
             this.dispose();
 
