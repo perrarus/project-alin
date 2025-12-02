@@ -15,14 +15,14 @@ public class HillCipherUtility {
         return Character.toLowerCase(letter) - 'a';  // a = 0
     }
     
-    // konversi angka ke huruf (0 = A, 1 = B, ..., 25 = Z)
+    // konversi angka ke huruf kapital (0 = A, 1 = B, ..., 25 = Z)
     public static String numberToLetter(int number) {
         int adjustedNumber = number % 26;
         if (adjustedNumber < 0) adjustedNumber += 26;
         return String.valueOf((char) (adjustedNumber + 'A'));
     }
     
-    // konversi karakter ke angka 
+    // konversi karakter ke angka (case inputnya huruf + angka)
     public static int charToNumber(char ch) {
         if (Character.isLetter(ch)) {
             // huruf: A=0, ..., Z=25
@@ -36,7 +36,7 @@ public class HillCipherUtility {
         }
     }
     
-    // konversi angka ke karakter
+    // konversi angka ke karakter (case inputnya huruf + angka)
     public static String numberToChar(int number) {
         if (number >= 0 && number <= 25) {
             return String.valueOf((char) (number + 'A'));
@@ -47,7 +47,7 @@ public class HillCipherUtility {
         }
     }
     
-    // konversi teks ke angka
+    // konversi string teks ke array angka
     public static int[] textToNumbers(String text) {
         text = text.toUpperCase().replaceAll("[^A-Z0-9]", "");
         List<Integer> numbersList = new ArrayList<>();
@@ -68,7 +68,7 @@ public class HillCipherUtility {
         return numbers;
     }
     
-    // Kkonversi angka ke teks 
+    // konversi array angka ke string teks
     public static String numbersToText(int[] numbers) {
         StringBuilder text = new StringBuilder();
         for (int number : numbers) {
@@ -101,7 +101,7 @@ public class HillCipherUtility {
                     if (j < values.length && !values[j].isEmpty()) 
                     {
                         try {
-                            // oba parse sebagai angka 
+                            // coba parse sebagai angka 
                             matrix[i][j] = Integer.parseInt(values[j]);
                         } catch (NumberFormatException e) {
                             // coba sebagai huruf
@@ -139,19 +139,19 @@ public class HillCipherUtility {
         return gcd(det, mod) == 1;
     }
     
-    // hitung determinan matriks 2x2
+    // hitung determinan matriks 2x2:  ad - bc
     public static int determinant2x2(int[][] matrix) {
         return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
     }
     
-    // hitung determinan matriks 3x3
+    // hitung determinan matriks 3x3: Sarrus atau ekspansi faktor
     public static int determinant3x3(int[][] matrix) {
         return matrix[0][0] * (matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1])
              - matrix[0][1] * (matrix[1][0] * matrix[2][2] - matrix[1][2] * matrix[2][0])
              + matrix[0][2] * (matrix[1][0] * matrix[2][1] - matrix[1][1] * matrix[2][0]);
     }
     
-    // hitung determinan berdasarkan ukuran
+    // panggil determinant2x2 atau 3x3 berdasarkan ukuran matriks 
     public static int determinant(int[][] matrix) {
         if (matrix.length == 2) {
             return determinant2x2(matrix);
@@ -191,7 +191,7 @@ public class HillCipherUtility {
         int size = keyMatrix.length;
         int[] numbers = textToNumbers(plaintext);
         
-        // Ttambah padding kalau perlu
+        // tambah padding kalau perlu
         int paddingNeeded = (size - (numbers.length % size)) % size;
         int[] paddedNumbers = new int[numbers.length + paddingNeeded];
         System.arraycopy(numbers, 0, paddedNumbers, 0, numbers.length);
@@ -222,7 +222,7 @@ public class HillCipherUtility {
   
     public static EncryptionResultWithPadding encryptWithDetails(String plaintext, int[][] keyMatrix) {
         int size = keyMatrix.length;
-        String originalPlaintext = plaintext; // Simpan plaintext asli
+        String originalPlaintext = plaintext; // simpan plaintext asli
         
         // simpan semua langkah untuk ditampilkan
         List<String> steps = new ArrayList<>();
@@ -933,17 +933,50 @@ public class HillCipherUtility {
         return numbersToText(resultArray);
     }
     
+    // cari matriks invers modulo 26
+    public static int[][] findInverseMatrix(int[][] matrix, int mod) {
+        int size = matrix.length;
+        int det = determinant(matrix);
+        
+        // konversi determinan ke nilai positif modulo
+        int detPositif = det % mod;
+        if (detPositif < 0) detPositif += mod;
+        
+        // cari invers determinan modulo 26
+        int detInverse = -1;
+        for (int i = 0; i < mod; i++) {
+            if ((detPositif * i) % mod == 1) {
+                detInverse = i;
+                break;
+            }
+        }
+        
+        if (detInverse == -1) {
+            throw new IllegalArgumentException("Matriks tidak memiliki invers modulo " + mod);
+        }
+        
+        if (size == 2) {
+            return inverse2x2(matrix, detInverse, mod);
+        } else {
+            return inverse3x3(matrix, detInverse, mod);
+        }
+    }
+    
     // method bantu untuk cari invers matriks dengan detail
     private static int[][] findInverseMatrixWithDetails(int[][] matrix, int mod, List<String> steps) {
         int size = matrix.length;
         int det = determinant(matrix);
+        
+        // konversi determinan ke nilai positif modulo
+        int detPositif = det % mod;
+        if (detPositif < 0) detPositif += mod;
         
         steps.add("Determinan matriks: " + det);
         
         // cari invers determinan modulo 26
         int detInverse = -1;
         for (int i = 0; i < mod; i++) {
-            if ((det * i) % mod == 1) {
+            if ((detPositif * i) % mod == 1) {
                 detInverse = i;
                 break;
             }
@@ -994,12 +1027,16 @@ public class HillCipherUtility {
     private static int[][] findInverseMatrix3x3WithDetails(int[][] matrix, int mod, List<String> steps) {
         int det = determinant3x3(matrix);
         
+        // konversi determinan ke nilai positif modulo
+        int detPositif = det % mod;
+        if (detPositif < 0) detPositif += mod;
+        
         steps.add("Determinan matriks: " + det);
         
         // cari invers determinan modulo 26
         int detInverse = -1;
         for (int i = 0; i < mod; i++) {
-            if ((det * i) % mod == 1) {
+            if ((detPositif * i) % mod == 1) {
                 detInverse = i;
                 break;
             }
@@ -1136,35 +1173,10 @@ public class HillCipherUtility {
             for (int j = 0; j < size; j++) {
                 sum += matrix[i][j] * vector[j];
             }
-            result[i] = Math.floorMod(sum, 26); // Mod 26
+            result[i] = Math.floorMod(sum, 26); // mod 26
         }
         
         return result;
-    }
-    
-    // cari matriks invers modulo 26
-    public static int[][] findInverseMatrix(int[][] matrix, int mod) {
-        int size = matrix.length;
-        int det = determinant(matrix);
-        
-        // cari invers determinan modulo 26
-        int detInverse = -1;
-        for (int i = 0; i < mod; i++) {
-            if ((det * i) % mod == 1) {
-                detInverse = i;
-                break;
-            }
-        }
-        
-        if (detInverse == -1) {
-            throw new IllegalArgumentException("Matriks tidak memiliki invers modulo " + mod);
-        }
-        
-        if (size == 2) {
-            return inverse2x2(matrix, detInverse, mod);
-        } else {
-            return inverse3x3(matrix, detInverse, mod);
-        }
     }
     
     // invers matriks 2x2

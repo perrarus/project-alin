@@ -333,7 +333,7 @@ public class EncryptFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
         
     public void customizeComponents() {
-        // Define colors
+        // define colors
         java.awt.Color backgroundColor = new java.awt.Color(28, 28, 28);
         java.awt.Color contentPaneColor = new java.awt.Color(50, 50, 50); // LEBIH TERANG DARI BACKGROUND
         java.awt.Color buttonColor = new java.awt.Color(0, 80, 180);
